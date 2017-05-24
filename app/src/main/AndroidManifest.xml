@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.android.shushme">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,8 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAWxP6z8BT0HjRCd_wjeqKAgq2ER0zyAkc"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAWxP6z8BT0HjRCd_wjeqKAgq2ER0zyAkc" />
 
         <activity android:name="com.example.android.shushme.MainActivity">
             <intent-filter>
@@ -22,7 +26,7 @@
         <provider
             android:name="com.example.android.shushme.provider.PlaceContentProvider"
             android:authorities="com.example.android.shushme"
-            android:exported="false"/>
+            android:exported="false" />
 
     </application>
 
