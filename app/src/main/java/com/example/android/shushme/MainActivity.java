@@ -16,6 +16,8 @@ package com.example.android.shushme;
 * limitations under the License.
 */
 
+import android.content.ContentValues;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,10 +31,15 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+import com.example.android.shushme.provider.PlaceContract;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -40,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     // Constants
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 111;
+    private static final int PLACE_PICKER_REQUEST = 1;
 
     // Member variables
     private PlaceListAdapter mAdapter;
@@ -89,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.e(TAG, "API Client Connection Failed!");
     }
 
+
+
     /***
      * Button Click event handler to handle clicking the "Add new location" Button
      *
@@ -101,8 +111,38 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             return;
         }
         Toast.makeText(this, getString(R.string.location_permissions_granted_message), Toast.LENGTH_LONG).show();
+
+        try {
+            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+            Intent i = builder.build(this);
+            startActivityForResult(i, PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
+            Place place = PlacePicker.getPlace(this, data);
+            if (place == null) {
+                Log.i(TAG, "No place selected");
+                return;
+            }
+            //Extract the place information from API
+            String placeName = place.getName().toString();
+            String placeAdress = place.getAddress().toString();
+            String placeId = place.getId();
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PlaceContract.PlaceEntry.COLUMN_PLACE_ID, placeId);
+            getContentResolver().insert(PlaceContract.PlaceEntry.CONTENT_URI,contentValues);
+
+        }
+    }
 
     @Override
     public void onResume() {
