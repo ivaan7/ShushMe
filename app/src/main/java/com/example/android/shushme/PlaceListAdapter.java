@@ -63,18 +63,16 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.Plac
      */
     @Override
     public void onBindViewHolder(PlaceViewHolder holder, int position) {
-
         String placeName = mPlaces.get(position).getName().toString();
-        String addressName = mPlaces.get(position).getAddress().toString();
+        String placeAddress = mPlaces.get(position).getAddress().toString();
         holder.nameTextView.setText(placeName);
-        holder.addressTextView.setText(addressName);
-
+        holder.addressTextView.setText(placeAddress);
     }
 
-    public void swapPlaces(PlaceBuffer newPlaces) {
+    public void swapPlaces(PlaceBuffer newPlaces){
         mPlaces = newPlaces;
         if (mPlaces != null) {
-            //refresh RecyclerView
+            // Force the RecyclerView to refresh
             this.notifyDataSetChanged();
         }
     }
@@ -86,7 +84,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.Plac
      */
     @Override
     public int getItemCount() {
-        if (mPlaces == null) return 0;
+        if(mPlaces==null) return 0;
         return mPlaces.getCount();
     }
 
